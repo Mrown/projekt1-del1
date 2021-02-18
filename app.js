@@ -6,16 +6,17 @@ const path = require('path');
 // const server = oprette server + implementere html sider
 
 const server = http.createServer((req, res) => {
-    if(req.url === '/') {
-        fs.readFile(path.join(__dirname, 'forside.html'), (err, data) => {
-            res.writeHead(200, {'Content-type': 'text/html'}); //omdanner det til html
+    console.log(req.url);
+    if(req.url === '/databases.xml') {
+        fs.readFile(path.join(__dirname, 'databases.xml'), (err, data) => {
+            res.writeHead(200, {'Content-type': 'text/xml'}); //omdanner det til html
             res.write(data);
             res.end();
         });
     }
-    if(req.url === '/addbooks') {
-        fs.readFile(path.join(__dirname, 'addBooks.html'), (err, data) => {
-            res.writeHead(200, {'Content-type': 'text/html'}); //omdanner det til html
+    if(req.url === '/databases.xml') {
+        fs.readFile(path.join(__dirname, 'browsere2.xsl'), (err, data) => {
+            res.writeHead(200, {'Content-type': 'text/xsl'}); //omdanner det til html
             res.write(data);
             res.end();
         });
@@ -31,7 +32,8 @@ const server = http.createServer((req, res) => {
     }
 });
 
-server.listen(3000, () => console.log('server is up and running'));
+server.listen(3001, () => console.log('server is up and running'));
+
 
 const fs = require("fs");
 // read XML file
@@ -39,7 +41,6 @@ fs.readFile("databases.xml", "utf-8", (err, data) => {
     if (err) {
         throw err;
     }
-
     // convert XML data to JSON object
     xml2js.parseString(data, (err, result) => {
         if (err) {
@@ -47,22 +48,26 @@ fs.readFile("databases.xml", "utf-8", (err, data) => {
         }
 
         // replace `Neo4j` with `ArangoDB`
-        result.databases.database[2].name = 'ArangoDB';
+        //result.catalog.cd[0].title = '';
 
         // add a new database to list
         const postgres = {
-            name: 'PostgreSQL',
-            type: 'RDBMS'
+            title: '1',
+            artist: '2',
+            country: '3',
+            company: '4',
+            price: '5',
+            year: '6'
         };
 
-        result.databases.database.push(postgres);
+        result.catalog.cd.push(postgres);
 
         // convert SJON objec to XML
         const builder = new xml2js.Builder();
         const xml = builder.buildObject(result);
 
         // write updated XML string to a file
-        fs.writeFile('new-databases.xml', xml, (err) => {
+        fs.writeFile('databases.xml', xml, (err) => {
             if (err) {
                 throw err;
             }
@@ -72,6 +77,8 @@ fs.readFile("databases.xml", "utf-8", (err, data) => {
 
     });
 });
+
+
 
 
 
